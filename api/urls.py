@@ -1,19 +1,14 @@
-# api/urls.py
-from django.conf.urls import url
-from rest_framework.authtoken.views import obtain_auth_token
-from .views import CreateUserAPIView, LogoutUserAPIView
+from .views import RegisterAPI, LoginAPI, ChangePasswordView
 from django.urls import path, include
-from .views import HelloAPI
+from knox import views as knox_views
+from summary.views import SummaryListView
 
 urlpatterns = [
-    path("hello/", HelloAPI),
-    url(r'^auth/login/$',
-        obtain_auth_token,
-        name='auth_user_login'),
-    url(r'^auth/register/$',
-        CreateUserAPIView.as_view(),
-        name='auth_user_create'),
-    url(r'^auth/logout/$',
-        LogoutUserAPIView.as_view(),
-        name='auth_user_logout')
+    path('register/', RegisterAPI.as_view(), name='register'),
+    path('login/', LoginAPI.as_view(), name='login'),
+    path('logout/', knox_views.LogoutView.as_view(), name='logout'),
+    path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
+    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    path('summary_list/', SummaryListView.as_view(), name='summary'),
 ]
