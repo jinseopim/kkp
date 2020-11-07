@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'knox',
     'blog',
     'summary',
+    'restaurant',
 ]
 
 REST_FRAMEWORK = {
