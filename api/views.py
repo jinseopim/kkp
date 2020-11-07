@@ -11,6 +11,7 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 
+
 # Register API
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer

@@ -17,5 +17,5 @@ class Summary(models.Model):
     def __str__(self):
         Summary.objects.filter(date__lte=timezone.now())\
                     .order_by('created_date')
-        return self.title
+        return self.summary_name
 

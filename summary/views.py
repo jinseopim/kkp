@@ -8,7 +8,7 @@ class SummaryListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Summary
-        fields = ('id', 'author', 'title', 'text', 'created_date')
+        fields = ('thumbnail', 'id', 'author', 'section_name', 'category_name', 'summary_name', 'url', 'created_date')
 
 
 class SummaryListView(generics.ListAPIView):
