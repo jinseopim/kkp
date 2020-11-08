@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
-from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
+from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer, ProfileSerializer, ProfileStatusSerializer
 
 from django.contrib.auth import login
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -10,6 +10,8 @@ from knox.views import LoginView as KnoxLoginView
 from rest_framework import status
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
+
+from .models import Profile
 
 
 # Register API
@@ -82,3 +84,13 @@ class ChangePasswordView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ProfileList(generics.ListAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileStatusSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class ProfileUpdateAPI(generics.UpdateAPIView):
+    lookup_field = "user_pk"
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer

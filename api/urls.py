@@ -1,17 +1,26 @@
-from .views import RegisterAPI, LoginAPI, ChangePasswordView
+from .views import RegisterAPI, LoginAPI, ChangePasswordView, UserAPI, ProfileUpdateAPI, ProfileList
 from restaurant import views
 from django.urls import path, include
 from knox import views as knox_views
 from summary.views import SummaryListView
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 urlpatterns = [
-    path('register/', RegisterAPI.as_view(), name='register'),
-    path('login/', LoginAPI.as_view(), name='login'),
-    path('logout/', knox_views.LogoutView.as_view(), name='logout'),
-    path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
-    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
-    path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    path('auth/register/', RegisterAPI.as_view(), name='register'),
+    path('auth/login/', LoginAPI.as_view(), name='login'),
+    path("auth/user/", UserAPI.as_view(), name='user'),
+    path("auth/profile/<int:user_pk>/update/", ProfileUpdateAPI.as_view()),
+    path('auth/profiles/', ProfileList.as_view(), name='profile-list'),
+    path('auth/logout/', knox_views.LogoutView.as_view(), name='logout'),
+    path('auth/logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
+    path('auth/change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('auth/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('summary_list/', SummaryListView.as_view(), name='summary'),
-    path('index/', views.index, name='summary'),
-    path('get_rest_list/', views.get_rest_list, name='summary'),
+    path('index/', views.index, name='index'),
+    path('get_rest_list/', views.get_rest_list, name='get_rest_list'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

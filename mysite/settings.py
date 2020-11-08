@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'blog',
     'summary',
     'restaurant',
+    'accounts',
 ]
 
 REST_FRAMEWORK = {
@@ -153,6 +154,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
 
 # Email
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
