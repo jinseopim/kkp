@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", include("api.urls")),
     path("api/auth", include("knox.urls")),
-    path('', include('blog.urls')),
+    path('', include('accounts.urls')),
+    path('home/', include('home.urls')),
     path('send_email/', TemplateView.as_view(template_name="send_email/send_email.html"), name='send_email'),
 ]

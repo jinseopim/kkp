@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-
+    {% load static %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,13 +12,13 @@
     <title>SB Admin 2 - Login</title>
 
     <!-- Custom fonts for this template-->
-    <link href="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
 
 </head>
 
@@ -41,40 +41,38 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" id="user-login" enctype="application/json">
+                                        {% csrf_token %}
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address...">
+                                            <input type="text" class="form-control form-control-user"
+                                                id="login-user-name" name="username" placeholder="사용자 아이디 입력">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
+                                                id="login-user-password" name="password" placeholder="비밀번호 입력">
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
+                                                <input type="checkbox" class="custom-control-input" id="input-local-storage">
+                                                <label class="custom-control-label" for="input-local-storage">Remember
                                                     Me</label>
                                             </div>
                                         </div>
-                                        <a href="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/index.html" class="btn btn-primary btn-user btn-block">
-                                            Login
-                                        </a>
+                                        <button id='btn-login' class="btn btn-primary btn-user btn-block">Login</button>
                                         <hr>
-                                        <a href="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/index.html" class="btn btn-google btn-user btn-block">
+                                        <a href="/home/home_page" class="btn btn-google btn-user btn-block">
                                             <i class="fab fa-google fa-fw"></i> Login with Google
                                         </a>
-                                        <a href="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/index.html" class="btn btn-facebook btn-user btn-block">
+                                        <a href="/home/home_page" class="btn btn-facebook btn-user btn-block">
                                             <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
                                         </a>
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
+                                        <a class="small" href="/accounts/forgot_password_page">Forgot Password?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
+                                        <a class="small" href="/accounts/register_page">Create an Account!</a>
                                     </div>
                                 </div>
                             </div>
@@ -89,14 +87,155 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/vendor/jquery/jquery.min.js"></script>
-    <script src="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="../../../../../Users/user/Downloads/startbootstrap-sb-admin-2-gh-pages/js/sb-admin-2.min.js"></script>
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    <script>
+        var g_urls = {
+            'login': '{% url "login-api" %}',
+            'logout': '{% url "logout-api" %}',
+        };
+
+        var g_auth = localStorage.getItem("auth");
+
+        if(g_auth == null) {
+            g_auth = sessionStorage.getItem("auth");
+        }
+
+        if(g_auth) {
+            try {
+                g_auth = JSON.parse(g_auth);
+            } catch(error) {
+                g_auth = null;
+            }
+        }
+
+        var getCookie = function(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+        var g_csrftoken = getCookie('csrftoken');
+
+        var initLogin = function() {
+            if(g_auth) {
+                alert("g_auth : " + g_auth)
+                if(g_auth.remember_me) {
+                    localStorage.setItem("auth", JSON.stringify(g_auth));
+                } else {
+                    sessionStorage.setItem("auth", JSON.stringify(g_auth));
+                }
+            } else {
+                localStorage.removeItem("auth");
+                sessionStorage.removeItem("auth");
+            }
+        };
+
+        // login start
+        $('#btn-login').click(function(e){
+            var username = $('#login-user-name').val();
+            var password = $('#login-user-password').val();
+            var remember_me = $('#input-local-storage').prop('checked');
+
+            alert(username + ":" + password);
+
+            if(username && password) {
+                alert("Will try to login with " + username + ":" + password +"==>"+g_urls.login + "|" + g_csrftoken);
+
+                $.ajax({
+                    url: g_urls.login,
+                    method: "POST",
+                    data: {
+                        username: username,
+                        password: password,
+                        csrfmiddlewaretoken: g_csrftoken
+                    }
+                }).done(function(data) {
+                    alert("DONE: " + username + ":" + data.key);
+                    g_auth = {
+                        username: username,
+                        key: data.key,
+                        remember_me: remember_me
+                    };
+
+                    initLogin();
+
+                    g_csrftoken = getCookie('csrftoken');
+                }).fail(function(data) {
+                    alert("FAIL" + ":" + data.user);
+                });
+            } else {
+                alert("error");
+            }
+        });
+        // login end
+
+        // 로그인 진행
+        /*
+        $('#btn-login').click(function(e){
+            e.preventDefault();
+            var url = $(this).attr('href');
+            alert(url);
+            var form = $('#user-login')[0];
+            var formData = new FormData(form);
+
+            var username = $('#login-user-name').val();
+            var password = $('#login-user-password').val();
+
+            alert(username + ":" + password);
+
+            $.ajax({
+                url : url,
+                // enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false,
+                cache: false,
+                method : 'POST',
+                data: {
+                    username: username,
+                    password: password,
+                    csrfmiddlewaretoken: g_csrftoken
+                }
+            }).done(function(data){
+
+                alert(data);
+
+                if(data.works){
+                    alert('로그인되었습니다.')
+                    location.reload();
+                } else if(data.wrongInformation) {
+                    alert('입력된 정보와 일치하는 회원 정보가 없습니다.');
+                    $('#login-user-name').val("");
+                    $('#login-user-password').val("");
+
+                } else if(data.noEmail) {
+                    alert('이메일 주소를 입력해주세요.');
+                    $('#login-user-password').val("");
+                } else if(data.noPassword) {
+                    alert('비밀번호를 입력해주세요.');
+                } else {
+                    alert('정상 요청이 아닙니다.');
+                }
+            });
+        });
+        */
+    </script>
 
 </body>
 
