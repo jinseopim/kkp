@@ -116,22 +116,7 @@
             }
         }
 
-        var getCookie = function(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        };
-        var g_csrftoken = getCookie('csrftoken');
+        var g_csrftoken = "{{csrf_token}}";
 
         var initLogin = function() {
             if(g_auth) {
@@ -153,32 +138,45 @@
             var password = $('#login-user-password').val();
             var remember_me = $('#input-local-storage').prop('checked');
 
-            alert(username + ":" + password);
-
             if(username && password) {
-                alert("Will try to login with " + username + ":" + password +"==>"+g_urls.login + "|" + g_csrftoken);
-
                 $.ajax({
                     url: g_urls.login,
                     method: "POST",
+                    type: 'POST',
+                    async: false,
                     data: {
                         username: username,
                         password: password,
                         csrfmiddlewaretoken: g_csrftoken
+                    },
+                    success : function(data) {
+                        g_auth = {
+                            username: username,
+                            key: data.token,
+                            remember_me: remember_me
+                        };
+
+                        initLogin();
+
+                        g_csrftoken = "{{csrf_token}}";
+
+                        alert("DONE: " + data.user.username + ":" + data.token + ":::" + g_csrftoken);
+
+                        url = "http://127.0.0.1:8000/home/home_page/";
+                        $(location).attr('href', url);
+
+                        alert("DONE 2");
+                    },
+                    error : function(data) {
+                        console.log("ajax error");
+                    },
+                    complete : function(data) {
+                        console.log("ajax complete");
                     }
                 }).done(function(data) {
-                    alert("DONE: " + username + ":" + data.key);
-                    g_auth = {
-                        username: username,
-                        key: data.key,
-                        remember_me: remember_me
-                    };
-
-                    initLogin();
-
-                    g_csrftoken = getCookie('csrftoken');
+                    console.log("done : " + data);
                 }).fail(function(data) {
-                    alert("FAIL" + ":" + data.user);
+                    console.log("fail : " + data);
                 });
             } else {
                 alert("error");

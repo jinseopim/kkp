@@ -13,7 +13,7 @@ urlpatterns = [
     path("auth/user/", UserAPI.as_view(), name='user-api'),
     path("auth/profile/<int:user_pk>/update/", ProfileUpdateAPI.as_view()),
     path('auth/profiles/', ProfileList.as_view(), name='profile-list'),
-    # path('auth/logout/', knox_views.LogoutView.as_view(), name='logout-api'),
+    path('auth/logout/', knox_views.LogoutView.as_view(), name='logout-api'),
     path('auth/logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall-api'),
     path('auth/change-password/', ChangePasswordView.as_view(), name='change-password-api'),
     path('auth/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset-api')),

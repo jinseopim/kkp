@@ -18,6 +18,10 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Profile
 
+import json
+from django.http import JsonResponse
+from collections import OrderedDict
+
 
 # Register API
 class RegisterAPI(generics.GenericAPIView):
@@ -43,14 +47,17 @@ class LoginAPI(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        return Response(
-            {
-                "user": UserSerializer(
-                    user, context=self.get_serializer_context()
-                ).data,
-                "token": AuthToken.objects.create(user)[1],
-            }
-        )
+
+        response_data_dict = OrderedDict()
+        response_data_dict["user"] = UserSerializer(user, context=self.get_serializer_context()).data
+        response_data_dict["token"] = AuthToken.objects.create(user)[1]
+
+        # context = json.dumps(response_data_dict)
+        context = response_data_dict
+
+        print("context : ", context)
+
+        return JsonResponse(context)
 
 
 # Get User API
