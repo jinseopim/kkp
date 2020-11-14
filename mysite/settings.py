@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'restaurant',
     'accounts',
     'home',
+    'profile_page',
 ]
 
 REST_FRAMEWORK = {

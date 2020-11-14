@@ -88,14 +88,7 @@
 
     <!-- Bootstrap core JavaScript-->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
-
+    <script src="{% static 'js/common/commonAjax.js' %}"></script>
     <script>
         var g_urls = {
             'login': '{% url "login-api" %}',
@@ -118,121 +111,61 @@
 
         var g_csrftoken = "{{csrf_token}}";
 
-        var initLogin = function() {
-            if(g_auth) {
-                alert("g_auth : " + g_auth)
-                if(g_auth.remember_me) {
-                    localStorage.setItem("auth", JSON.stringify(g_auth));
-                } else {
-                    sessionStorage.setItem("auth", JSON.stringify(g_auth));
-                }
-            } else {
-                localStorage.removeItem("auth");
-                sessionStorage.removeItem("auth");
-            }
-        };
-
         // login start
         $('#btn-login').click(function(e){
+            e.preventDefault();
+
             var username = $('#login-user-name').val();
             var password = $('#login-user-password').val();
-            var remember_me = $('#input-local-storage').prop('checked');
 
             if(username && password) {
-                $.ajax({
-                    url: g_urls.login,
-                    method: "POST",
-                    type: 'POST',
-                    async: false,
-                    data: {
-                        username: username,
-                        password: password,
-                        csrfmiddlewaretoken: g_csrftoken
-                    },
-                    success : function(data) {
-                        g_auth = {
-                            username: username,
-                            key: data.token,
-                            remember_me: remember_me
-                        };
 
-                        initLogin();
-
-                        g_csrftoken = "{{csrf_token}}";
-
-                        alert("DONE: " + data.user.username + ":" + data.token + ":::" + g_csrftoken);
-
-                        url = "http://127.0.0.1:8000/home/home_page/";
-                        $(location).attr('href', url);
-
-                        alert("DONE 2");
-                    },
-                    error : function(data) {
-                        console.log("ajax error");
-                    },
-                    complete : function(data) {
-                        console.log("ajax complete");
-                    }
-                }).done(function(data) {
-                    console.log("done : " + data);
-                }).fail(function(data) {
-                    console.log("fail : " + data);
+                user_data = JSON.stringify({
+                    username: username,
+                    password: password,
+                    csrfmiddlewaretoken: g_csrftoken
                 });
+
+                var errormsg ="ERRCODE:10000";
+
+                cfn_ajaxTransmit(
+                    g_urls.login,
+                    user_data,
+                    'post',
+                    errormsg
+                );
             } else {
                 alert("error");
             }
         });
+
+        function fn_callBack(calback_id, result, textStatus) {
+            if(calback_id=='login') {
+                if(result.result == 'success') {
+                    var remember_me = $('#input-local-storage').prop('checked');
+
+                    g_auth = {
+                        username: result.user.username,
+                        key: result.token,
+                        remember_me: remember_me
+                    };
+
+                    if(g_auth) {
+                        if(g_auth.remember_me) {
+                            localStorage.setItem("auth", JSON.stringify(g_auth));
+                        } else {
+                            sessionStorage.setItem("auth", JSON.stringify(g_auth));
+                        }
+                    } else {
+                        localStorage.removeItem("auth");
+                        sessionStorage.removeItem("auth");
+                    }
+
+                    $(location).attr('href', '/home/home_page/');
+                }
+            }
+        }
         // login end
-
-        // 로그인 진행
-        /*
-        $('#btn-login').click(function(e){
-            e.preventDefault();
-            var url = $(this).attr('href');
-            alert(url);
-            var form = $('#user-login')[0];
-            var formData = new FormData(form);
-
-            var username = $('#login-user-name').val();
-            var password = $('#login-user-password').val();
-
-            alert(username + ":" + password);
-
-            $.ajax({
-                url : url,
-                // enctype: 'multipart/form-data',
-                processData: false,
-                contentType: false,
-                cache: false,
-                method : 'POST',
-                data: {
-                    username: username,
-                    password: password,
-                    csrfmiddlewaretoken: g_csrftoken
-                }
-            }).done(function(data){
-
-                alert(data);
-
-                if(data.works){
-                    alert('로그인되었습니다.')
-                    location.reload();
-                } else if(data.wrongInformation) {
-                    alert('입력된 정보와 일치하는 회원 정보가 없습니다.');
-                    $('#login-user-name').val("");
-                    $('#login-user-password').val("");
-
-                } else if(data.noEmail) {
-                    alert('이메일 주소를 입력해주세요.');
-                    $('#login-user-password').val("");
-                } else if(data.noPassword) {
-                    alert('비밀번호를 입력해주세요.');
-                } else {
-                    alert('정상 요청이 아닙니다.');
-                }
-            });
-        });
-        */
     </script>
 
 </body>
