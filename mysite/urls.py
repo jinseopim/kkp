@@ -24,5 +24,6 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('home/', include('home.urls')),
     path('profile_page/', include('profile_page.urls')),
+    path('finance_data/', include('finance_data.urls')),
     path('send_email/', TemplateView.as_view(template_name="send_email/send_email.html"), name='send_email'),
 ]

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'accounts',
     'home',
     'profile_page',
+    'finance_data',
 ]
 
 REST_FRAMEWORK = {
