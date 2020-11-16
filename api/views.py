@@ -43,15 +43,9 @@ class LoginAPI(generics.GenericAPIView):
     serializer_class = LoginUserSerializer
 
     def post(self, request, *args, **kwargs):
-        print("LoginAPI : ", request.data)
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-
-        print("LoginAPI user : ", user)
-
-        print("LoginAPI AuthToken : ", AuthToken.objects.create(user)[1])
 
         context = {
             "user": UserSerializer(user, context=self.get_serializer_context()).data,

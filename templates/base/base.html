@@ -22,7 +22,6 @@
 </head>
 
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -508,6 +507,70 @@
                 }
             }
         }
+    });
+
+    function removeData(chart) {
+        chart.data.labels = "";
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data = "";
+        });
+        chart.update();
+    }
+
+    function updateChartData(chart, label, data) {
+        chart.data.labels = label;
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data = data;
+        });
+        chart.update();
+    }
+
+    function fn_callBack(calback_id, result, textStatus) {
+        if(calback_id=='get_finance_data') {
+            if(result.result == 'success') {
+
+                var appl_label = [];
+                var appl_data = [];
+
+                var amzn_label = [];
+                var amzn_data = [];
+
+                var dji_label = [];
+                var dji_data = [];
+
+                var usd_krw_label = [];
+                var usd_krw_data = [];
+
+               $.each(result.appl_res, function(k, v) {
+                   console.log(k + ":" + v.date + ":" + v.stock);
+                   appl_label.push(v.date);
+                   appl_data.push(v.stock);
+               });
+
+               console.log(appl_label);
+               console.log(appl_data);
+
+               removeData(myChart1);
+               updateChartData(myChart1, appl_label, appl_data);
+
+            }
+        }
+    }
+
+    $( document ).ready(function() {
+        stock_search_date = JSON.stringify({
+            start_date: '2011-11-01',
+            end_date: '2011-11-05'
+        });
+
+        var errormsg ="ERRCODE:10000";
+
+        cfn_ajaxTransmit(
+            '/finance_data/get_finance_data/',
+            stock_search_date,
+            'post',
+            errormsg
+        );
     });
     </script>
 
