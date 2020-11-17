@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'home',
     'profile_page',
     'finance_data',
+    'django_baseurl',
 ]
 
 REST_FRAMEWORK = {
@@ -98,6 +99,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_baseurl.context_processors.baseurl',
             ],
         },
     },
@@ -159,7 +161,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Email
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

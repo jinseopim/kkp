@@ -21,6 +21,3 @@ urlpatterns = [
     path('index/', views.index, name='index'),
     path('get_rest_list/', views.get_rest_list, name='get_rest_list'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

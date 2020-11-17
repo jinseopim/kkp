@@ -547,12 +547,35 @@
                    appl_data.push(v.stock);
                });
 
-               console.log(appl_label);
-               console.log(appl_data);
+               $.each(result.amzn_res, function(k, v) {
+                   console.log(k + ":" + v.date + ":" + v.stock);
+                   amzn_label.push(v.date);
+                   amzn_data.push(v.stock);
+               });
+
+               $.each(result.dji_res, function(k, v) {
+                   console.log(k + ":" + v.date + ":" + v.stock);
+                   dji_label.push(v.date);
+                   dji_data.push(v.stock);
+               });
+
+               $.each(result.usd_krw_res, function(k, v) {
+                   console.log(k + ":" + v.date + ":" + v.stock);
+                   usd_krw_label.push(v.date);
+                   usd_krw_data.push(v.stock);
+               });
 
                removeData(myChart1);
                updateChartData(myChart1, appl_label, appl_data);
 
+               removeData(myChart2);
+               updateChartData(myChart2, amzn_label, amzn_data);
+
+               removeData(myChart3);
+               updateChartData(myChart3, dji_label, dji_data);
+
+               removeData(myChart4);
+               updateChartData(myChart4, usd_krw_label, usd_krw_data);
             }
         }
     }

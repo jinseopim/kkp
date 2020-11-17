@@ -8,6 +8,7 @@ class Summary(models.Model):
     section_name = models.CharField(max_length=1000, null=True)
     category_name = models.CharField(max_length=1000, null=True)
     summary_name = models.TextField(null=True)
+    publisher_name = models.CharField(max_length=1000, null=True)
     url = models.CharField(max_length=4000, null=True)
     date = models.DateTimeField()
     thumbnail = models.ImageField(u'썸네일',
