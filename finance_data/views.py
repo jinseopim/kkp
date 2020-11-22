@@ -121,6 +121,6 @@ def get_finance_data(request):
         "result": "success"
     }
 
-    print(context, "asdfasdfasdfasdf", type(context))
+    # print(context, "asdfasdfasdfasdf", type(context))
 
     return JsonResponse(context, safe=False)

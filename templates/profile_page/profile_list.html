@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-
+{% load static %}
 {% block content %}
 <style>
 body{
@@ -115,18 +115,26 @@ body{
                 <div class="row">
                     <div class="col-md-4">
                         <div class="profile-img">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" alt=""/>
+                            {% if profile_user.profile.avatar.url %}
+                                <img class="round" src="{{ profile_user.profile.avatar.url }}" width="200" height="200"> <br>
+                            {% else %}
+                                <img class="round" src="{% static '/img/default-profile-image.png' %}" width="200" height="200"> <br>
+                            {% endif %}
+                            <!--
                             <div class="file btn btn-lg btn-primary">
                                 Change Photo
                                 <input type="file" name="file"/>
                             </div>
+                            -->
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="profile-head">
-                                    <h5>
-                                        Kshiti Ghelani
-                                    </h5>
+                                    {% if profile_user.profile.nickname %}
+                                        <h5>
+                                            {{ profile_user.profile.nickname }}
+                                        </h5>
+                                    {% endif %}
                                     <h6>
                                         Web Developer and Designer
                                     </h6>
@@ -142,7 +150,11 @@ body{
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/>
+                        {% if user == profile_user %}
+                            <a href="#">
+                            <button type="button" class="profile-edit-btn">프로필 편집</button></a>
+                        {% endif %}
+                        <!-- <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/> -->
                     </div>
                 </div>
                 <div class="row">
@@ -168,7 +180,7 @@ body{
                                                 <label>User Id</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>Kshiti123</p>
+                                                <p>{{ profile_user.username }}</p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -176,7 +188,9 @@ body{
                                                 <label>Name</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>Kshiti Ghelani</p>
+                                                {% if profile_user.first_name is not None %}
+                                                <p>{{profile_user.last_name}} {{profile_user.first_name}}</p>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="row">
@@ -184,7 +198,9 @@ body{
                                                 <label>Email</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>kshitighelani@gmail.com</p>
+                                                {% if profile_user.email %}
+                                                <p>{{ profile_user.email }}</p>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="row">
@@ -192,7 +208,9 @@ body{
                                                 <label>Phone</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>123 456 7890</p>
+                                                {% if profile_user.profile.phone %}
+                                                    <p>{{ profile_user.profile.phone }}</p>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="row">
@@ -200,7 +218,11 @@ body{
                                                 <label>Profession</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>Web Developer and Designer</p>
+                                                <p>
+                                                    {% for item in profile_user.profile.like_stock.all %}
+                                                        {{ item }},
+                                                    {% endfor %}
+                                                </p>
                                             </div>
                                         </div>
                             </div>
@@ -259,4 +281,5 @@ body{
         </div>
     </div>
 </div>
+
 {% endblock %}

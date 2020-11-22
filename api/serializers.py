@@ -6,7 +6,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.contrib.auth import authenticate
-from .models import Profile, ProfileStatus
+from profile_page.models import Profile, ProfileStatus
 
 
 # User Serializer

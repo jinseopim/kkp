@@ -16,7 +16,7 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Profile
+from profile_page.models import Profile
 
 import json
 from django.http import JsonResponse

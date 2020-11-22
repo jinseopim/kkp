@@ -1,7 +1,8 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.views.generic.detail import DetailView
 
 
-@login_required
-def profile_list(request):
-    return render(request, "profile_page/profile_list.html")
+class ProfileView(DetailView):
+    context_object_name = 'profile_user'
+    model = User
+    template_name = 'profile_page/profile_list.html'
